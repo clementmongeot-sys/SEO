@@ -3,21 +3,193 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loader - M Logo</title>
+  <title>Loader Preview — M Logo</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
+      min-height: 100vh;
+      background: #1a1a1a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      padding: 40px 20px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .45;
+    }
+
+    /* ── Preview cards ── */
+    .previews {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .card-label {
+      font-size: .75rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      opacity: .4;
+    }
+
+    /* Loader large */
+    .preview-large {
+      width: 300px;
+      height: 300px;
+      background: #FFE402;
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      background: #111;
-      font-family: sans-serif;
+      box-shadow: 0 24px 60px rgba(255,228,2,.18);
     }
 
-    .loader-overlay {
+    .preview-large #lottie-large {
+      width: 220px;
+      height: 220px;
+    }
+
+    /* Loader medium */
+    .preview-medium {
+      width: 160px;
+      height: 160px;
+      background: #FFE402;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 12px 32px rgba(255,228,2,.18);
+    }
+
+    .preview-medium #lottie-medium {
+      width: 110px;
+      height: 110px;
+    }
+
+    /* Loader small */
+    .preview-small {
+      width: 80px;
+      height: 80px;
+      background: #FFE402;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(255,228,2,.18);
+    }
+
+    .preview-small #lottie-small {
+      width: 56px;
+      height: 56px;
+    }
+
+    /* Loader full screen simulation */
+    .preview-fullscreen-wrap {
+      position: relative;
+      width: 340px;
+      height: 200px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,.5);
+    }
+
+    .preview-fullscreen-bg {
+      position: absolute;
+      inset: 0;
+      background: #FFE402;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity .5s ease;
+    }
+
+    .preview-fullscreen-bg.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #lottie-fullscreen {
+      width: 120px;
+      height: 120px;
+    }
+
+    .preview-fullscreen-content {
+      position: absolute;
+      inset: 0;
+      background: #2b2b2b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 16px;
+    }
+
+    .mock-line {
+      background: rgba(255,255,255,.12);
+      border-radius: 4px;
+      height: 10px;
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      background: #2e2e2e;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+
+    button:hover { background: #3a3a3a; }
+    button:active { transform: scale(.97); }
+
+    button.primary {
+      background: #FFE402;
+      color: #111;
+      border-color: #FFE402;
+    }
+
+    button.primary:hover { background: #f5db00; }
+
+    /* ── Fullscreen overlay (real) ── */
+    .overlay {
       position: fixed;
       inset: 0;
       background: #FFE402;
@@ -25,62 +197,135 @@
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      transition: opacity 0.4s ease;
-    }
-
-    .loader-overlay.hidden {
       opacity: 0;
       pointer-events: none;
+      transition: opacity .4s ease;
     }
 
-    #lottie-loader {
-      width: 220px;
-      height: 220px;
+    .overlay.visible {
+      opacity: 1;
+      pointer-events: all;
     }
 
-    /* Demo page content behind the loader */
-    .page-content {
-      color: #fff;
-      text-align: center;
+    .overlay.fading {
+      opacity: 0;
     }
 
-    .page-content h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .page-content p {
-      opacity: 0.6;
+    #lottie-overlay {
+      width: 240px;
+      height: 240px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Loader overlay -->
-  <div class="loader-overlay" id="loader">
-    <div id="lottie-loader"></div>
+  <header>
+    <h1>Loader Preview — M Logo</h1>
+  </header>
+
+  <!-- Preview cards -->
+  <div class="previews">
+
+    <div class="card">
+      <div class="preview-large">
+        <div id="lottie-large"></div>
+      </div>
+      <span class="card-label">300 × 300</span>
+    </div>
+
+    <div class="card">
+      <div class="preview-medium">
+        <div id="lottie-medium"></div>
+      </div>
+      <span class="card-label">160 × 160</span>
+    </div>
+
+    <div class="card">
+      <div class="preview-small">
+        <div id="lottie-small"></div>
+      </div>
+      <span class="card-label">80 × 80</span>
+    </div>
+
+    <div class="card">
+      <div class="preview-fullscreen-wrap">
+        <!-- fake site content -->
+        <div class="preview-fullscreen-content">
+          <div class="mock-line" style="width:60%"></div>
+          <div class="mock-line" style="width:80%"></div>
+          <div class="mock-line" style="width:50%"></div>
+        </div>
+        <!-- loader overlay inside -->
+        <div class="preview-fullscreen-bg" id="mini-overlay">
+          <div id="lottie-fullscreen"></div>
+        </div>
+      </div>
+      <span class="card-label">Simulation pleine page</span>
+    </div>
+
   </div>
 
-  <!-- Page content (visible once loader is dismissed) -->
-  <div class="page-content">
-    <h1>Bienvenue</h1>
-    <p>Le contenu de la page s'affiche ici.</p>
+  <!-- Controls -->
+  <div class="controls">
+    <button class="primary" onclick="launchFullscreen()">Voir en plein écran</button>
+    <button onclick="replayMini()">Rejouer la simulation</button>
+    <button onclick="toggleLoop()">Pause / Play</button>
+  </div>
+
+  <!-- Real fullscreen overlay -->
+  <div class="overlay" id="overlay">
+    <div id="lottie-overlay"></div>
   </div>
 
   <script>
-    // Init Lottie animation
-    const anim = lottie.loadAnimation({
-      container: document.getElementById('lottie-loader'),
+    const opts = (id) => ({
+      container: document.getElementById(id),
       renderer: 'svg',
       loop: true,
       autoplay: true,
       path: './loader.json'
     });
 
-    // Hide loader after 3 seconds (adjust as needed)
-    setTimeout(() => {
-      document.getElementById('loader').classList.add('hidden');
-    }, 3000);
+    const large    = lottie.loadAnimation(opts('lottie-large'));
+    const medium   = lottie.loadAnimation(opts('lottie-medium'));
+    const small    = lottie.loadAnimation(opts('lottie-small'));
+    const mini     = lottie.loadAnimation(opts('lottie-fullscreen'));
+    const overlay  = lottie.loadAnimation(opts('lottie-overlay'));
+
+    let playing = true;
+
+    // Auto-hide mini overlay after 2.8s
+    function replayMini() {
+      const el = document.getElementById('mini-overlay');
+      el.classList.remove('hidden');
+      mini.goToAndPlay(0, true);
+      clearTimeout(window._miniTimer);
+      window._miniTimer = setTimeout(() => el.classList.add('hidden'), 2800);
+    }
+    replayMini();
+
+    // Real fullscreen
+    function launchFullscreen() {
+      const el = document.getElementById('overlay');
+      overlay.goToAndPlay(0, true);
+      el.classList.add('visible');
+      setTimeout(() => {
+        el.classList.add('fading');
+        setTimeout(() => {
+          el.classList.remove('visible', 'fading');
+        }, 500);
+      }, 3000);
+    }
+
+    // Pause/play all
+    function toggleLoop() {
+      if (playing) {
+        [large, medium, small, mini, overlay].forEach(a => a.pause());
+      } else {
+        [large, medium, small, mini, overlay].forEach(a => a.play());
+      }
+      playing = !playing;
+    }
   </script>
 </body>
 </html>
