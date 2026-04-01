@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loader - M Logo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #111;
+      font-family: sans-serif;
+    }
+
+    .loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: #FFE402;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.4s ease;
+    }
+
+    .loader-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #lottie-loader {
+      width: 220px;
+      height: 220px;
+    }
+
+    /* Demo page content behind the loader */
+    .page-content {
+      color: #fff;
+      text-align: center;
+    }
+
+    .page-content h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-content p {
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loader overlay -->
+  <div class="loader-overlay" id="loader">
+    <div id="lottie-loader"></div>
+  </div>
+
+  <!-- Page content (visible once loader is dismissed) -->
+  <div class="page-content">
+    <h1>Bienvenue</h1>
+    <p>Le contenu de la page s'affiche ici.</p>
+  </div>
+
+  <script>
+    // Init Lottie animation
+    const anim = lottie.loadAnimation({
+      container: document.getElementById('lottie-loader'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: './loader.json'
+    });
+
+    // Hide loader after 3 seconds (adjust as needed)
+    setTimeout(() => {
+      document.getElementById('loader').classList.add('hidden');
+    }, 3000);
+  </script>
+</body>
+</html>
